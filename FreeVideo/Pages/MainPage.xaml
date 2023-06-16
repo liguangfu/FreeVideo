@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
+             x:Class="FreeVideo.Pages.MainPage"
+             Title="搜索视频">
+    <ContentPage.BindingContext>
+        <viewModels:MainViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <SearchBar x:Name="searchBar" 
+                       Placeholder="请输入视频名称" 
+                       SearchCommand="{Binding PerformSearch}"
+                       SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
+
+
+            <CollectionView x:Name="searchResult" 
+                            ItemsSource="{Binding SearchResults}"
+                            ItemsLayout="VerticalGrid,2"
+                            HeightRequest="300">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ImageButton Grid.RowSpan="2"
+                                         Source="{Binding vod_image}"
+                                         Aspect="AspectFill"
+                                         HeightRequest="60"
+                                         WidthRequest="60" 
+                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=SelectSearchResultCommand}" 
+                                         CommandParameter="{Binding}"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding vod_name}"
+                                   FontAttributes="Bold" />
+                            <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="{Binding vod_remarks}"
+                                   FontAttributes="Italic"
+                                   VerticalOptions="End" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+            <CollectionView x:Name="cvHisVideo" 
+                            ItemsSource="{Binding HisVideoList}"
+                            ItemsLayout="VerticalGrid,2"
+                            SelectionMode="None"
+                            HeightRequest="400">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete"
+                                               BackgroundColor="LightPink"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=DeleteHisVideoCommand}" 
+                                               CommandParameter="{Binding}"/>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <Grid Padding="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ImageButton Grid.RowSpan="2"
+                                             Source="{Binding vod_pic}"
+                                             Aspect="AspectFill"
+                                             HeightRequest="60"
+                                             WidthRequest="60" 
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=SelectHisVideoCommand}" 
+                                             CommandParameter="{Binding}"/>
+                                <Label Grid.Column="1"
+                                   Text="{Binding vod_name}"
+                                   FontAttributes="Bold" />
+                                <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="{Binding vod_remarks}"
+                                   FontAttributes="Italic"
+                                   VerticalOptions="End" />
+                            </Grid>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

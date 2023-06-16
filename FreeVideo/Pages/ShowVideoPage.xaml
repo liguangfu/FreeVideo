@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
+                x:Class="FreeVideo.Pages.ShowVideoPage"
+                Title="">
+
+    <!--<Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="True" Command="{Binding BackCommand}" />
+    </Shell.BackButtonBehavior>-->
+
+
+    <ContentPage.BindingContext>
+        <viewModels:ShowVideoModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Title>
+        <MultiBinding  StringFormat="{}{0} - {1}">
+            <Binding Path="VodName" />
+            <Binding Path="VodRemarks" />
+        </MultiBinding>
+    </ContentPage.Title>
+
+
+    <VerticalStackLayout>
+        <StackLayout>
+            <VerticalStackLayout>
+                <HorizontalStackLayout>
+                    <Image 
+                           Source="{Binding VodPic}"
+                           Aspect="AspectFill"
+                           HeightRequest="150"
+                           WidthRequest="100" />
+                    <VerticalStackLayout>
+                        <Label 
+                               Text="{Binding VodName}"
+                               FontAttributes="Bold" 
+                               HeightRequest="40"/>
+                        <Label
+                               Text="{Binding VodRemarks}"
+                               FontAttributes="Bold" 
+                               HeightRequest="40"/>
+
+                        <Label 
+                            Text="{Binding  Path=HisVideo.current_play}"
+                            FontAttributes="Bold" 
+                            HeightRequest="40"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+                <StackLayout>
+                    <Label 
+                        Text="{Binding VodContent}"
+                        FontAttributes="Bold" 
+                        LineBreakMode="CharacterWrap" />
+                </StackLayout>
+
+            </VerticalStackLayout>
+        </StackLayout>
+
+
+        <CollectionView 
+            ItemsSource="{Binding VodPlayUrl}"
+            ItemsLayout="VerticalGrid,4"
+            HeightRequest="300">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Text="{Binding name}" 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ShowVideoModel}}, Path=PlayVideoCommand}" 
+                                CommandParameter="{Binding}"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>
