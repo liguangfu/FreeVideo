@@ -13,25 +13,44 @@ public class ShowVideoModel : BaseViewModel, IQueryAttributable
     private readonly VideoDatabase videoDatabase;
 
     public ICommand PlayVideoCommand { get; }
-    public ShowVideoModel()
+    public ICommand GoPlayCommand { get; }
+    public ICommand BackMainCommand { get; }
+
+    public ShowVideoModel(ISearchVideoService searchVideoService, VideoDatabase videoDatabase)
     {
-        this.searchVideoService = new zyk1080SearchVideoService();
-        this.videoDatabase = new VideoDatabase();
+        this.searchVideoService = searchVideoService;
+        this.videoDatabase = videoDatabase;
 
         PlayVideoCommand = new Command<VideoPlayListModel>(async (VideoPlayListModel vod) =>
         {
             var navigationParameter = new Dictionary<string, object>
             {
                 { "vod_id", VodId },
+                { "playMode", "select_play" },
                 { "select_play", vod.name },
                 { "select_play_url", vod.url },
-                { "VodPlayUrl", VodPlayUrl },
+                { "vodPlayUrls", VodPlayUrl },
             };
             await Shell.Current.GoToAsync($"playVideoPage", navigationParameter);
         });
 
-    }
+        GoPlayCommand = new Command(async () =>
+        {
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "vod_id", VodId },
+                { "playMode", "go_play" },
+                { "vodPlayUrls", VodPlayUrl },
+            };
+            await Shell.Current.GoToAsync($"playVideoPage", navigationParameter);
+        });
 
+
+        BackMainCommand = new Command(async () =>
+        {
+            await Shell.Current.GoToAsync($"..");
+        });
+    }
 
 
     public async void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -43,7 +62,6 @@ public class ShowVideoModel : BaseViewModel, IQueryAttributable
             {
                 string vod_play_from = query["vod_play_from"].ToString();
             }
-            HisVideo = await this.videoDatabase.GetHisVideoAsync(id);
 
             var searchResult = await searchVideoService.GetSearchDetailAsync(id);
             if (searchResult != null)
@@ -54,34 +72,35 @@ public class ShowVideoModel : BaseViewModel, IQueryAttributable
                 VodRemarks = searchResult.vod_remarks;
                 VodContent = searchResult.vod_content;
                 VodPlayUrl = new ObservableCollection<VideoPlayListModel>(searchResult.vod_play_list);
-
-                if (HisVideo != null)
-                {
-                    HisVideo.show_time = DateTime.Now;
-                    HisVideo.vod_remarks = searchResult.vod_remarks;
-                    HisVideo.vod_play_url = searchResult.vod_play_url;
-                }
-                else
-                {
-                    HisVideo = new VideoHistoryModel()
-                    {
-
-                        vod_id = searchResult.vod_id,
-                        vod_actor = searchResult.vod_actor,
-                        vod_play_url = searchResult.vod_play_url,
-                        vod_content = searchResult.vod_content,
-                        vod_en = searchResult.vod_en,
-                        vod_name = searchResult.vod_name,
-                        vod_pic = searchResult.vod_pic,
-                        vod_play_from = searchResult.vod_play_from,
-                        vod_remarks = searchResult.vod_remarks,
-                        show_time = DateTime.Now
-                    };
-                }
-                await this.videoDatabase.SaveHisVideoAsync(HisVideo);
-
-
             }
+
+            //查询历史记录
+            var hisVideo = await this.videoDatabase.GetHisVideoAsync(id);
+            if (hisVideo != null)
+            {
+                CurrentDuration = hisVideo.current_duration;
+                CurrentPlay = hisVideo.current_play;
+                hisVideo.show_time = DateTime.Now;
+                hisVideo.vod_remarks = searchResult.vod_remarks;
+                hisVideo.vod_play_url = searchResult.vod_play_url;
+            }
+            else
+            {
+                hisVideo = new VideoHistoryModel()
+                {
+                    vod_id = searchResult.vod_id,
+                    vod_actor = searchResult.vod_actor,
+                    vod_play_url = searchResult.vod_play_url,
+                    vod_content = searchResult.vod_content,
+                    vod_en = searchResult.vod_en,
+                    vod_name = searchResult.vod_name,
+                    vod_pic = searchResult.vod_pic,
+                    vod_play_from = searchResult.vod_play_from,
+                    vod_remarks = searchResult.vod_remarks,
+                    show_time = DateTime.Now
+                };
+            }
+            await this.videoDatabase.SaveHisVideoAsync(hisVideo);
         }
     }
 
@@ -157,15 +176,29 @@ public class ShowVideoModel : BaseViewModel, IQueryAttributable
     }
 
     /// <summary>
-    /// 
+    /// 历史播放，如：HD国语版
     /// </summary>
-    private VideoHistoryModel hisVideo { get; set; }
-    public VideoHistoryModel HisVideo
+    private string current_play { get; set; }
+    public string CurrentPlay
     {
-        get { return hisVideo; }
+        get { return current_play; }
         set
         {
-            hisVideo = value;
+            current_play = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// 历史播放位置
+    /// </summary>
+    private TimeSpan current_duration { get; set; }
+    public TimeSpan CurrentDuration
+    {
+        get { return current_duration; }
+        set
+        {
+            current_duration = value;
             OnPropertyChanged();
         }
     }

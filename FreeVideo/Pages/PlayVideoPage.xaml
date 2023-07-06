@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:lgf="http://schemas.lgf.com/dotnet/2022/maui/toolkit"
-             xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
-             x:Class="FreeVideo.Pages.PlayVideoPage"
-             Unloaded="ContentPage_Unloaded" 
-             BackgroundColor="Black"
-             Shell.BackgroundColor="Black">
+<pages:BasePage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:pages="clr-namespace:FreeVideo.Pages"
+    xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
+    x:TypeArguments="viewModels:PlayVideoViewModel"
+    x:DataType="viewModels:PlayVideoViewModel"
+    x:Class="FreeVideo.Pages.PlayVideoPage"
+    Unloaded="ContentPage_Unloaded" 
+    BackgroundColor="Black"
+    Shell.BackgroundColor="Black">
 
     <!--<Shell.BackButtonBehavior>
-        <BackButtonBehavior IsVisible="True" TextOverride="退"  Command="{Binding BackCommand}" />
+        <BackButtonBehavior IsVisible="True" Command="{Binding BackShowVideoCommand}" />
     </Shell.BackButtonBehavior>-->
 
-    <ContentPage.BindingContext>
+    <!--<BasePage.BindingContext>
         <viewModels:PlayVideoViewModel />
-    </ContentPage.BindingContext>
-    
-    <ContentPage.Title>
+    </BasePage.BindingContext>
+-->
+
+    <pages:BasePage.Title>
         <MultiBinding  StringFormat="{}{0} - {1}">
             <Binding Path="VodName" />
             <Binding Path="CurrentPlay" />
         </MultiBinding>
-    </ContentPage.Title>
-    
-    <StackLayout Spacing="10" Padding="5" Orientation="Vertical"
-        x:Name="outerStack">
-    
-        <VerticalStackLayout>
-        <!-- <lgf:Video x:Name="video" Source="{Binding CurrentPlayUrl}" /> -->
+    </pages:BasePage.Title>
 
+    <StackLayout Orientation="Vertical"
+        x:Name="outerStack">
+        <VerticalStackLayout>
             <toolkit:MediaElement x:Name="mediaElement" 
-                               ShouldAutoPlay="True" 
-                               Source="{Binding CurrentPlayUrl}" 
-                               Aspect="AspectFill" 
-                               ShouldKeepScreenOn = "True" 
-                               HeightRequest="700" />
+                                  ShouldAutoPlay="True" 
+                                  Source="{Binding CurrentPlayUrl}" 
+                                  Aspect="AspectFill" 
+                                  ShouldKeepScreenOn = "True" 
+                                  HeightRequest="700" 
+                                  PositionChanged="positionChanged"
+                                  MediaEnded="mediaEnded"
+                                  MediaOpened="mediaOpened"/>
         </VerticalStackLayout>
     </StackLayout>
-</ContentPage>
+</pages:BasePage>

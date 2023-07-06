@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace FreeVideo.ViewModels;
 
-public class MainViewModel : BaseViewModel, IQueryAttributable
+public class MainViewModel : BaseViewModel
 {
     private readonly ISearchVideoService searchVideoService;
     private readonly VideoDatabase videoDatabase;
@@ -18,10 +18,10 @@ public class MainViewModel : BaseViewModel, IQueryAttributable
     public ICommand SelectHisVideoCommand { get; }
 
     public ICommand DeleteHisVideoCommand { get; }
-    public MainViewModel()
+    public MainViewModel(ISearchVideoService searchVideoService, VideoDatabase videoDatabase)
     {
-        this.searchVideoService = new zyk1080SearchVideoService();
-        this.videoDatabase = new VideoDatabase();
+        this.searchVideoService = searchVideoService;
+        this.videoDatabase = videoDatabase;
 
 
         PerformSearch = new Command<string>(async (string query) =>
@@ -49,18 +49,18 @@ public class MainViewModel : BaseViewModel, IQueryAttributable
         });
     }
 
-    public async void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        var hisVideoList = await this.videoDatabase.GetHisVideoListAsync();
-        if (hisVideoList != null)
-        {
-            foreach (var item in hisVideoList)
-            {
-                HisVideoList.Add(item);
-            }
-            OnPropertyChanged(nameof(HisVideoList));
-        }
-    }
+    //public async void ApplyQueryAttributes(IDictionary<string, object> query)
+    //{
+    //    var hisVideoList = await this.videoDatabase.GetHisVideoListAsync();
+    //    if (hisVideoList != null)
+    //    {
+    //        foreach (var item in hisVideoList)
+    //        {
+    //            HisVideoList.Add(item);
+    //        }
+    //        OnPropertyChanged(nameof(HisVideoList));
+    //    }
+    //}
     public async void GetHisVideoListAsync()
     {
         var hisVideoList = await this.videoDatabase.GetHisVideoListAsync();

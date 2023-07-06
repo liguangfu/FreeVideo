@@ -2,16 +2,13 @@
 
 namespace FreeVideo.Pages;
 
-public partial class MainPage : ContentPage
+public partial class MainPage : BasePage<ViewModels.MainViewModel>
 {
     private readonly VideoDatabase _videoDatabase;
-    public MainPage(VideoDatabase videoDatabase)
+    public MainPage(ViewModels.MainViewModel vm, VideoDatabase videoDatabase) : base(vm)
     {
         InitializeComponent();
         _videoDatabase = videoDatabase;
-        // BindingContext
-
-
     }
 
     protected override async void OnAppearing()
@@ -25,17 +22,5 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
-    {
-        if (searchResult.SelectedItem != null)
-        {
-            searchResult.SelectedItem = null;
-        }
-        
-        if (cvHisVideo.SelectedItem != null)
-        {
-            cvHisVideo.SelectedItem = null;
-        }
-    }
 }
 

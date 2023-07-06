@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
-             x:Class="FreeVideo.Pages.MainPage"
-             Title="搜索视频">
-    <ContentPage.BindingContext>
-        <viewModels:MainViewModel />
-    </ContentPage.BindingContext>
+<pages:BasePage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:FreeVideo.Pages"
+    xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
+    xmlns:models="clr-namespace:FreeVideo.Models"
+    x:TypeArguments="viewModels:MainViewModel"
+    x:DataType="viewModels:MainViewModel"
+    x:Class="FreeVideo.Pages.MainPage" 
+    Shell.BackgroundColor="Black"
+    Title="搜索视频">
+
 
     <ScrollView>
         <VerticalStackLayout>
@@ -32,18 +36,18 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <ImageButton Grid.RowSpan="2"
-                                         Source="{Binding vod_image}"
+                                         Source="{Binding Source={RelativeSource AncestorType={x:Type models:SearchVideoListModel}}, Path=vod_image}"
                                          Aspect="AspectFill"
                                          HeightRequest="60"
                                          WidthRequest="60" 
                                          Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=SelectSearchResultCommand}" 
                                          CommandParameter="{Binding}"/>
                             <Label Grid.Column="1"
-                                   Text="{Binding vod_name}"
+                                   Text="{Binding Source={RelativeSource AncestorType={x:Type models:SearchVideoListModel}}, Path=vod_name}"
                                    FontAttributes="Bold" />
                             <Label Grid.Row="1"
                                    Grid.Column="1"
-                                   Text="{Binding vod_remarks}"
+                                   Text="{Binding Source={RelativeSource AncestorType={x:Type models:SearchVideoListModel}}, Path=vod_remarks}"
                                    FontAttributes="Italic"
                                    VerticalOptions="End" />
                         </Grid>
@@ -78,18 +82,18 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <ImageButton Grid.RowSpan="2"
-                                             Source="{Binding vod_pic}"
+                                             Source="{Binding Source={RelativeSource AncestorType={x:Type models:VideoHistoryModel}}, Path=vod_pic}"
                                              Aspect="AspectFill"
                                              HeightRequest="60"
                                              WidthRequest="60" 
                                              Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=SelectHisVideoCommand}" 
                                              CommandParameter="{Binding}"/>
                                 <Label Grid.Column="1"
-                                   Text="{Binding vod_name}"
+                                   Text="{Binding Source={RelativeSource AncestorType={x:Type models:VideoHistoryModel}}, Path=vod_name}"
                                    FontAttributes="Bold" />
                                 <Label Grid.Row="1"
                                    Grid.Column="1"
-                                   Text="{Binding vod_remarks}"
+                                   Text="{Binding Source={RelativeSource AncestorType={x:Type models:VideoHistoryModel}}, Path=vod_remarks}"
                                    FontAttributes="Italic"
                                    VerticalOptions="End" />
                             </Grid>
@@ -101,4 +105,4 @@
         </VerticalStackLayout>
     </ScrollView>
 
-</ContentPage>
+</pages:BasePage>

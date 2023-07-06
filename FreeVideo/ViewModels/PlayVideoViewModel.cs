@@ -10,9 +10,16 @@ namespace FreeVideo.ViewModels
     {
         private readonly VideoDatabase videoDatabase;
 
-        public PlayVideoViewModel()
+        public ICommand BackShowVideoCommand { get; }
+
+        public PlayVideoViewModel(VideoDatabase videoDatabase)
         {
-            this.videoDatabase = new VideoDatabase();
+            this.videoDatabase = videoDatabase;
+
+            BackShowVideoCommand = new Command(async () =>
+            {
+                await Shell.Current.GoToAsync($"..?vod_id={VodId}&vod_play_from=");
+            });
         }
 
         public async void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -20,37 +27,43 @@ namespace FreeVideo.ViewModels
             if (query.ContainsKey("vod_id") && query["vod_id"] != null)
             {
                 VodId = query["vod_id"].ToString();
+
+                if (query.ContainsKey("vodPlayUrls") && query["vodPlayUrls"] != null)
+                {
+                    VodPlayUrl = query["vodPlayUrls"] as ObservableCollection<VideoPlayListModel>;
+                }
+
+                //获取历史记录
                 HisVideo = await this.videoDatabase.GetHisVideoAsync(VodId);
-            }
 
-            if (query.ContainsKey("VodPlayUrl") && query["VodPlayUrl"] != null)
-            {
-                VodPlayUrl = query["VodPlayUrl"] as ObservableCollection<VideoPlayListModel>;
-            }
+                //获取播放方式
+                if (query.ContainsKey("playMode") && query["playMode"] != null)
+                {
+                    var playMode = query["playMode"].ToString();
+                    if (playMode == "go_play" && !string.IsNullOrEmpty(HisVideo.current_play))//继续播放
+                    {
+                        CurrentPlay = HisVideo.current_play;
+                        CurrentPosition = HisVideo.current_duration;
+                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault(it => it.name.Equals(HisVideo.current_play))?.url;
+                    }
+                    else if (query.ContainsKey("select_play_url") && query["select_play_url"] != null)
+                    {
+                        CurrentPosition = TimeSpan.Zero;
+                        CurrentPlay = query["select_play"]?.ToString();
+                        CurrentPlayUrl = query["select_play_url"].ToString();
+                    }
+                    else
+                    {
+                        CurrentPosition = TimeSpan.Zero;
+                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault()?.url;
+                        CurrentPlay = VodPlayUrl.FirstOrDefault()?.name;
+                    }
+                }
 
-            if (query.ContainsKey("select_play") && query["select_play"] != null)
-            {
-                CurrentPlay = query["select_play"].ToString();
-            }
-            if (query.ContainsKey("select_play_url") && query["select_play_url"] != null)
-            {
-                CurrentPlayUrl = query["select_play_url"].ToString();
-            }
-            else if (HisVideo != null && !string.IsNullOrEmpty(HisVideo.current_play))
-            {
-                CurrentPlay = HisVideo.current_play;
-
-                CurrentPlayUrl = VodPlayUrl.Where(it => it.name.Equals(HisVideo.current_play)).FirstOrDefault()?.url;
-            }
-            else
-            {
-                CurrentPlayUrl = VodPlayUrl.FirstOrDefault()?.url;
-                CurrentPlay = VodPlayUrl.FirstOrDefault()?.name;
-            }
-
-            if (HisVideo != null)
-            {
-                VodName = HisVideo.vod_name;
+                if (HisVideo != null)
+                {
+                    VodName = HisVideo.vod_name;
+                }
             }
         }
 
@@ -104,22 +117,17 @@ namespace FreeVideo.ViewModels
             }
         }
 
-        /// <summary>
-        /// 当前播放位置
-        /// </summary>
-        private TimeSpan current_duration { get; set; }
-        /// <summary>
-        /// 当前播放位置
-        /// </summary>
-        public TimeSpan CurrentDuration
+
+        private TimeSpan current_position { get; set; }
+        public TimeSpan CurrentPosition
         {
-            get => current_duration;
+            get { return current_position; }
             set
             {
-                current_duration = value;
-                OnPropertyChanged();
+                current_position = value;
             }
         }
+
 
 
         private string vod_id { get; set; }
@@ -151,16 +159,6 @@ namespace FreeVideo.ViewModels
             {
                 his_video = value;
                 OnPropertyChanged();
-            }
-        }
-
-        private TimeSpan current_position { get; set; }
-        public TimeSpan CurrentPosition
-        {
-            get { return current_position; }
-            set
-            {
-                current_position = value;
             }
         }
 
