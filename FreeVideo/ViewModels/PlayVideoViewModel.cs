@@ -1,18 +1,17 @@
-﻿using CommunityToolkit.Maui.Core.Primitives;
-using FreeVideo.Data;
-using FreeVideo.Models;
+﻿using FreeVideo.Models;
+using FreeVideo.Services;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace FreeVideo.ViewModels
 {
     public class PlayVideoViewModel : BaseViewModel, IQueryAttributable
     {
-        private readonly VideoDatabase videoDatabase;
+        private readonly IHistoryVideoService _historyVideoService;
 
-        public PlayVideoViewModel()
+
+        public PlayVideoViewModel(IHistoryVideoService historyVideoService)
         {
-            this.videoDatabase = new VideoDatabase();
+            _historyVideoService = historyVideoService;
         }
 
         public async void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -20,7 +19,7 @@ namespace FreeVideo.ViewModels
             if (query.ContainsKey("vod_id") && query["vod_id"] != null)
             {
                 VodId = query["vod_id"].ToString();
-                HisVideo = await this.videoDatabase.GetHisVideoAsync(VodId);
+                HisVideo = await _historyVideoService.GetHisVideoAsync(VodId);
             }
 
             if (query.ContainsKey("VodPlayUrl") && query["VodPlayUrl"] != null)

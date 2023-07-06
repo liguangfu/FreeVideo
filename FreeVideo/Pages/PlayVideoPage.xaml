@@ -5,6 +5,7 @@
              xmlns:lgf="http://schemas.lgf.com/dotnet/2022/maui/toolkit"
              xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
              x:Class="FreeVideo.Pages.PlayVideoPage"
+             BindingContext="{Binding PlayVideoViewModel, Source={StaticResource ServiceLocator}}"
              Unloaded="ContentPage_Unloaded" 
              BackgroundColor="Black"
              Shell.BackgroundColor="Black">
@@ -13,9 +14,6 @@
         <BackButtonBehavior IsVisible="True" TextOverride="退"  Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>-->
 
-    <ContentPage.BindingContext>
-        <viewModels:PlayVideoViewModel />
-    </ContentPage.BindingContext>
     
     <ContentPage.Title>
         <MultiBinding  StringFormat="{}{0} - {1}">

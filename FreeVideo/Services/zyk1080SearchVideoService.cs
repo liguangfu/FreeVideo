@@ -6,15 +6,6 @@ using System.Text.Json.Serialization;
 namespace FreeVideo.Services;
 
 
-public interface ISearchVideoService
-{
-    Task<List<SearchVideoListModel>> GetSearchListAsync(string query);
-
-    Task<SearchVideoDetailtModel> GetSearchDetailAsync(string vod_id);
-}
-
-
-
 public class zyk1080SearchVideoService : ISearchVideoService, IDisposable
 {
     HttpClient _client;

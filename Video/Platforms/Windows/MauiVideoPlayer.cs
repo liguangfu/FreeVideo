@@ -1,6 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using Microsoft.UI.Xaml.Controls;
-using Video.Controls;
+﻿using Video.Controls;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;

@@ -1,37 +1,37 @@
-﻿using FreeVideo.Data;
+﻿using CommunityToolkit.Mvvm.Input;
 using FreeVideo.Models;
-using FreeVideo.Pages;
 using FreeVideo.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using static Android.Graphics.ColorSpace;
 
 namespace FreeVideo.ViewModels;
 
 public class ShowVideoModel : BaseViewModel, IQueryAttributable
 {
-    private readonly ISearchVideoService searchVideoService;
-    private readonly VideoDatabase videoDatabase;
+    private readonly IHistoryVideoService _historyVideoService;
 
-    public ICommand PlayVideoCommand { get; }
-    public ShowVideoModel()
+    public ShowVideoModel(IHistoryVideoService historyVideoService)
     {
-        this.searchVideoService = new zyk1080SearchVideoService();
-        this.videoDatabase = new VideoDatabase();
+        _historyVideoService = historyVideoService;
 
-        PlayVideoCommand = new Command<VideoPlayListModel>(async (VideoPlayListModel vod) =>
-        {
-            var navigationParameter = new Dictionary<string, object>
+        _lazyPlayVideoCommand = new Lazy<AsyncRelayCommand<VideoPlayListModel>>(new AsyncRelayCommand<VideoPlayListModel>(PlayVideoCommandFunction));
+    }
+
+
+    public AsyncRelayCommand<VideoPlayListModel> PlayVideoCommand => _lazyPlayVideoCommand.Value;
+    private Lazy<AsyncRelayCommand<VideoPlayListModel>> _lazyPlayVideoCommand;
+    public async Task PlayVideoCommandFunction(VideoPlayListModel vod)
+    {
+        var navigationParameter = new Dictionary<string, object>
             {
                 { "vod_id", VodId },
                 { "select_play", vod.name },
                 { "select_play_url", vod.url },
                 { "VodPlayUrl", VodPlayUrl },
             };
-            await Shell.Current.GoToAsync($"playVideoPage", navigationParameter);
-        });
-
+        await Shell.Current.GoToAsync($"playVideoPage", navigationParameter);
     }
-
 
 
     public async void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -43,44 +43,21 @@ public class ShowVideoModel : BaseViewModel, IQueryAttributable
             {
                 string vod_play_from = query["vod_play_from"].ToString();
             }
-            HisVideo = await this.videoDatabase.GetHisVideoAsync(id);
+            HisVideo = await _historyVideoService.GetHisVideoAsync(id);
 
-            var searchResult = await searchVideoService.GetSearchDetailAsync(id);
-            if (searchResult != null)
+            VodId = HisVideo.vod_id;
+            VodName = HisVideo.vod_name;
+            VodPic = HisVideo.vod_pic;
+            VodRemarks = HisVideo.vod_remarks;
+            VodContent = HisVideo.vod_content;
+            var list = HisVideo.vod_play_url.Split('#');
+            foreach (var item in list)
             {
-                VodId = searchResult.vod_id;
-                VodName = searchResult.vod_name;
-                VodPic = searchResult.vod_pic;
-                VodRemarks = searchResult.vod_remarks;
-                VodContent = searchResult.vod_content;
-                VodPlayUrl = new ObservableCollection<VideoPlayListModel>(searchResult.vod_play_list);
-
-                if (HisVideo != null)
+                var play_url = item.Split('$');
+                if (play_url.Length == 2)
                 {
-                    HisVideo.show_time = DateTime.Now;
-                    HisVideo.vod_remarks = searchResult.vod_remarks;
-                    HisVideo.vod_play_url = searchResult.vod_play_url;
+                    VodPlayUrl.Add(new VideoPlayListModel() { name = play_url[0], url = play_url[1] });
                 }
-                else
-                {
-                    HisVideo = new VideoHistoryModel()
-                    {
-
-                        vod_id = searchResult.vod_id,
-                        vod_actor = searchResult.vod_actor,
-                        vod_play_url = searchResult.vod_play_url,
-                        vod_content = searchResult.vod_content,
-                        vod_en = searchResult.vod_en,
-                        vod_name = searchResult.vod_name,
-                        vod_pic = searchResult.vod_pic,
-                        vod_play_from = searchResult.vod_play_from,
-                        vod_remarks = searchResult.vod_remarks,
-                        show_time = DateTime.Now
-                    };
-                }
-                await this.videoDatabase.SaveHisVideoAsync(HisVideo);
-
-
             }
         }
     }

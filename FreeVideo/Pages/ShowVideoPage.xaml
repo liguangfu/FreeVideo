@@ -3,16 +3,12 @@
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
                 x:Class="FreeVideo.Pages.ShowVideoPage"
+             BindingContext="{Binding ShowVideoModel, Source={StaticResource ServiceLocator}}"
                 Title="">
 
     <!--<Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="True" Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>-->
-
-
-    <ContentPage.BindingContext>
-        <viewModels:ShowVideoModel />
-    </ContentPage.BindingContext>
 
     <ContentPage.Title>
         <MultiBinding  StringFormat="{}{0} - {1}">
