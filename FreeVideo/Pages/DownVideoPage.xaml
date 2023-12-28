@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:pages="clr-namespace:FreeVideo.Pages"
+                xmlns:viewModels="clr-namespace:FreeVideo.ViewModels"
+                xmlns:models="clr-namespace:FreeVideo.Models"
+                x:TypeArguments="viewModels:DownVideoViewModel"
+                x:DataType="viewModels:DownVideoViewModel"
+             x:Class="FreeVideo.Pages.DownVideoPage"
+             >
+
+    <pages:BasePage.Title>
+        <MultiBinding  StringFormat="{}{0}">
+            <Binding Path="VodName" />
+        </MultiBinding>
+    </pages:BasePage.Title>
+
+
+    <VerticalStackLayout>
+
+        <CollectionView 
+            x:Name="collectionView"
+            ItemsSource="{Binding VodPlayList}"        
+            ItemsLayout="VerticalGrid,4"
+            HeightRequest="300">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Text="{Binding  Source={RelativeSource AncestorType={x:Type models:VideoPlayListModel}}, Path=name}" 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:DownVideoViewModel}}, Path=DownVideoCommand}" 
+                                CommandParameter="{Binding}" 
+                                ToolTipProperties.Text="下载"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</pages:BasePage>

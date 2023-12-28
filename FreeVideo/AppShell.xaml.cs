@@ -16,6 +16,7 @@ public partial class AppShell : Shell
     {
         Routes.Add("showVideoPage", typeof(ShowVideoPage));
         Routes.Add("playVideoPage", typeof(PlayVideoPage));
+        Routes.Add("downVideoPage", typeof(DownVideoPage));
 
         foreach (var item in Routes)
         {

@@ -39,7 +39,6 @@
                                Text="{Binding VodRemarks}"
                                FontAttributes="Bold" 
                                HeightRequest="40"/>
-
                         <Label 
                             FontAttributes="Bold" 
                             HeightRequest="40">
@@ -48,7 +47,20 @@
                                 <Binding Path="CurrentDuration" />
                             </MultiBinding>
                         </Label>
-                        <Button Text="继续播放" Command="{Binding GoPlayCommand}"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Text="继续播放" Command="{Binding GoPlayCommand}"/>
+                            <Button  Grid.Column="1"  Text="刷新" Command="{Binding RefreshCommand}"/>
+                            <Button  Grid.Column="2"  Text="下载" Command="{Binding DownCommand}"/>
+                        </Grid>
+                        
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
                 <StackLayout>
@@ -61,9 +73,9 @@
             </VerticalStackLayout>
         </StackLayout>
 
-
         <CollectionView 
-            ItemsSource="{Binding VodPlayUrl}"
+            x:Name="collectionView"
+            ItemsSource="{Binding VodPlayList}"        
             ItemsLayout="VerticalGrid,4"
             HeightRequest="300">
             <CollectionView.ItemTemplate>
@@ -77,7 +89,8 @@
                         </Grid.ColumnDefinitions>
                         <Button Text="{Binding  Source={RelativeSource AncestorType={x:Type models:VideoPlayListModel}}, Path=name}" 
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ShowVideoModel}}, Path=PlayVideoCommand}" 
-                                CommandParameter="{Binding}"/>
+                                CommandParameter="{Binding}" 
+                                ToolTipProperties.Text="测试"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

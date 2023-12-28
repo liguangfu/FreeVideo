@@ -9,6 +9,7 @@ namespace FreeVideo.Data
 
         public VideoDatabase()
         {
+
         }
 
         async Task Init()
@@ -17,7 +18,8 @@ namespace FreeVideo.Data
                 return;
 
             Database = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
-            var result = await Database.CreateTableAsync<VideoHistoryModel>();
+            await Database.CreateTableAsync<VideoHistoryModel>();
+            await Database.CreateTableAsync<VideoPlayListModel>();
         }
 
         public async Task<List<VideoHistoryModel>> GetHisVideoListAsync()
@@ -33,6 +35,12 @@ namespace FreeVideo.Data
             return await Database.Table<VideoHistoryModel>().Where(i => i.vod_id == vod_id).FirstOrDefaultAsync();
         }
 
+        public async Task<List<VideoPlayListModel>> GetVideoPlayUrlAsync(string vod_id)
+        {
+            await Init();
+            return await Database.Table<VideoPlayListModel>().Where(i => i.vod_id == vod_id).ToListAsync();
+        }
+
         public async Task<int> SaveHisVideoAsync(VideoHistoryModel item)
         {
             await Init();
@@ -41,6 +49,20 @@ namespace FreeVideo.Data
                 return await Database.UpdateAsync(item);
             else
                 return await Database.InsertAsync(item);
+        }
+
+        public async Task<int> SaveVideoPlayUrlAsync(string vod_id, List<VideoPlayListModel> list)
+        {
+            await Init();
+            await Database.Table<VideoPlayListModel>().DeleteAsync(i => i.vod_id == vod_id);
+
+            return await Database.InsertAllAsync(list);
+        }
+
+        public async Task<int> SaveVideoPlayUrlAsync(VideoPlayListModel item)
+        {
+            await Init();
+            return await Database.UpdateAsync(item);
         }
 
         public async Task<int> DeleteHisVideoAsync(VideoHistoryModel item)

@@ -36,6 +36,8 @@ public static class MauiProgram
         builder.Services.AddTransient<PlayVideoViewModel>().AddTransient<PlayVideoPage>();
         //Routing.RegisterRoute(nameof(PlayVideoPage), typeof(PlayVideoPage));
 
+        builder.Services.AddTransient<DownVideoViewModel>().AddTransient<DownVideoPage>();
+        //Routing.RegisterRoute(nameof(PlayVideoPage), typeof(PlayVideoPage));
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

@@ -44,18 +44,18 @@ namespace FreeVideo.ViewModels
                     {
                         CurrentPlay = HisVideo.current_play;
                         CurrentPosition = HisVideo.current_duration;
-                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault(it => it.name.Equals(HisVideo.current_play))?.url;
+                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault(it => it.name.Equals(HisVideo.current_play))?.getPlayUrl();
                     }
                     else if (query.ContainsKey("select_play_url") && query["select_play_url"] != null)
                     {
                         CurrentPosition = TimeSpan.Zero;
                         CurrentPlay = query["select_play"]?.ToString();
-                        CurrentPlayUrl = query["select_play_url"].ToString();
+                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault(it => it.name.Equals(CurrentPlay))?.getPlayUrl();
                     }
                     else
                     {
                         CurrentPosition = TimeSpan.Zero;
-                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault()?.url;
+                        CurrentPlayUrl = VodPlayUrl.FirstOrDefault()?.getPlayUrl();
                         CurrentPlay = VodPlayUrl.FirstOrDefault()?.name;
                     }
                 }
